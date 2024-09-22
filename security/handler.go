@@ -36,7 +36,7 @@ func (s *SecurityServiceImpl) GetSecurityToken(ctx context.Context, req *token.U
 		return nil, err
 	}
 
-	// 返回生成的 Token 和相关的用户 ID
+	// 返回生成 Token 和相关的用户 ID
 	return &token.TokenResponse{
 		UserId: req.UserId,
 		Token:  newToken,

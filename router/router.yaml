@@ -1,0 +1,26 @@
+plugins:
+  cos.jwt_plugin:
+    enable: true
+
+supergraph:
+  listen: 0.0.0.0:4666
+
+server:
+  cors:
+    allow_credentials: true
+    allow_headers:
+      - Content-Type
+      - Authorization
+    methods:
+      - POST
+      - GET
+      - OPTIONS
+
+headers:
+  all:
+    request:
+      - propagate:
+          matching: .*
+      - insert:
+          name: X-User-Id
+          from_context: UserId

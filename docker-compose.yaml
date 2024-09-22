@@ -1,0 +1,70 @@
+version: '3'
+
+services:
+  router-service:
+    image: router:latest
+    volumes:
+      - ./router/schema:/dist/config
+    depends_on:
+      - security-service
+      - example-service
+      - mysql
+    # restart: on-failure
+    networks:
+      - app_network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  security-service:
+    image: security:local
+    ports:
+      - "4000:4000"
+    networks:
+      - app_network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  example-service:
+    image: example:local
+    ports:
+      - "4001:4001"
+    volumes:
+      - ./example_storage:/root/storage
+    networks:
+      - app_network
+    environment:
+      - SHOW_CALLER=false
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_USER=myuser
+      - DB_PASSWORD=mypassword
+      - DB_DATABASE=example
+    depends_on:
+      mysql:
+        condition: service_healthy
+      
+  mysql:
+    image: mysql:latest
+    ports:
+      - "3306:33061"
+    environment:
+      - MYSQL_ROOT_PASSWORD=LTYlty0123
+      - MYSQL_DATABASE=example
+      - MYSQL_USER=myuser
+      - MYSQL_PASSWORD=mypassword
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - app_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  app_network:
+    driver: bridge
+
+volumes:
+  mysql_data:

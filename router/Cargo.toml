@@ -1,0 +1,24 @@
+[package]
+name = "router"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+apollo-router = "1.52.0"
+futures = "0.3.30"
+serde = { version = "1.0", features = ["derive"] }
+schemars = "0.8"
+tower = { version = "0.4", features = ["util"] }
+async-trait = "0.1"
+tonic = { version = "0.12.1", features = ["prost", "tls"] }
+tokio = { version = "1.39", features = ["full"] }
+http = "1.1.0"
+prost = "0.13.1"
+prost-types = "0.13.1"
+anyhow = "1.0.86"
+serde_json = "1.0.125"
+tracing = "0.1.40"
+
+
+[build-dependencies]
+tonic-build = "0.12"

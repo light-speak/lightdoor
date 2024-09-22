@@ -1,0 +1,26 @@
+syntax = "proto3";
+option go_package = "token";
+
+package proto;
+
+service SecurityService {
+  rpc GetSecurityUserId(TokenRequest) returns (TokenResponse) {}
+  rpc GetSecurityToken(UserIdRequest) returns (TokenResponse) {}
+}
+
+// 请求消息
+message TokenRequest {
+  string token = 1;
+}
+
+// 请求消息，包含用户 ID
+message UserIdRequest {
+  int64 user_id = 1;
+}
+
+// 响应消息
+message TokenResponse {
+  int64 user_id = 1;
+  string token = 2;
+  bool valid = 3;
+}
