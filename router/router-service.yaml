@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: router-service
+  labels:
+    k8s-app: router
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s-app: router
+  template:
+    metadata:
+      labels:
+        k8s-app: router
+    spec:
+      containers:
+      - name: router
+        image: ccr.ccs.tencentyun.com/test-lighthouse/router:v0.0.1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 4666
+          name: http
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 1024Mi
+          requests:
+            cpu: 200m
+            memory: 256Mi
+        env:
+        - name: PATH
+          value: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+        - name: APP_ENV
+          value: production
+        securityContext:
+          privileged: false
+        volumeMounts:
+        - mountPath: /dist/config
+          name: cfs-volume
+      volumes:
+      - name: cfs-volume
+        persistentVolumeClaim:
+          claimName: router-pvc
+      imagePullSecrets:
+      - name: qcloudregistrykey
+      tolerations:
+      - key: "eks.tke.cloud.tencent.com/eklet"
+        operator: "Exists"
+        effect: "NoSchedule"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: router-service
+spec:
+  selector:
+    k8s-app: router
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 4666
+  type: LoadBalancer

@@ -24,7 +24,7 @@ RUN cargo build --release
 # 为配置和模式创建目录
 RUN mkdir -p /dist/config && \
     mv target/release/router /dist && \
-    mv router.yaml /dist/router.yaml
+    mv config /dist/config
 
 FROM debian:bookworm-slim
 
@@ -34,7 +34,6 @@ RUN apt-get -y install \
 
 # 从构建镜像复制所需文件
 COPY --from=build --chown=root:root /dist /dist
-COPY --from=build --chown=root:root /app/schema /dist/config
 
 WORKDIR /dist
 
@@ -42,7 +41,7 @@ WORKDIR /dist
 RUN chmod 755 /dist/router
 
 # ENTRYPOINT ["/bin/sh", "-c", "tail -f /dev/null"]
-ENTRYPOINT ["/dist/router", "-c", "/dist/router.yaml", "-s", "/dist/config/supergraph-schema.graphql", "--hr"]
+ENTRYPOINT ["/dist/router", "-c", "/dist/config/router.yaml", "-s", "/dist/config/supergraph-schema.graphql", "--hr"]
 
 # 使用说明：
 # 要通过 docker-compose 运行这个镜像并传入配置文件，可以在 docker-compose.yml 中设置：

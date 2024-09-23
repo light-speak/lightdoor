@@ -1,6 +1,11 @@
 plugins:
   cos.jwt_plugin:
     enable: true
+include_subgraph_errors:
+  all: true  # 这将包含所有子图的错误
+  # 或者，如果您只想包含特定子图的错误：
+  # subgraphs: 
+  #   - user
 
 supergraph:
   listen: 0.0.0.0:4666
